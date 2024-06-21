@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const globalErrorhandler_1 = __importDefault(require("./app/middlewares/globalErrorhandler"));
 const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
+const service_routes_1 = require("./app/modules/service/service.routes");
 const userAuth_routes_1 = require("./app/modules/userAuth/userAuth.routes");
 // app
 const app = (0, express_1.default)();
@@ -13,6 +14,7 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 // application routes
 app.use("/api/auth/", userAuth_routes_1.UserAuthRoutes);
+app.use("/api", service_routes_1.ServicesRoutes);
 //Not Found
 app.use(notFound_1.default);
 // global error handler
