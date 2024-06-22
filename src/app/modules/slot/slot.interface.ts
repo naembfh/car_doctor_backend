@@ -8,3 +8,8 @@ export type Tslot = {
   endTime: string;
   isBooked: TBook;
 };
+
+export interface SlotQuery {
+  date?: string;
+  service?: string;
+}

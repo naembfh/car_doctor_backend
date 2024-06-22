@@ -1,19 +1,9 @@
 import { Types } from "mongoose";
-import { TService } from "../service/service.interface";
 import { Service } from "../service/service.model";
-import { Tslot } from "../slot/slot.interface";
 import { Slot } from "../slot/slot.model";
-import { TUserAuth } from "../userAuth/userAuth.interface";
 import { UserAuth } from "../userAuth/userAuth.model";
-import { TBooking } from "./booking.interface";
+import { MappedBooking, TBooking } from "./booking.interface";
 import { Booking } from "./booking.model";
-
-const isTUserAuth = (obj: any): obj is TUserAuth =>
-  obj && obj._id && typeof obj._id === "string";
-const isTService = (obj: any): obj is TService =>
-  obj && obj._id && typeof obj._id === "string";
-const isTslot = (obj: any): obj is Tslot =>
-  obj && obj._id && typeof obj._id === "string";
 
 const createBooking = async (
   userId: Types.ObjectId,
@@ -110,7 +100,7 @@ const getAllBookings = async () => {
     })
     .exec();
 
-  const result = bookings.map((booking: any) => ({
+  const result = bookings.map((booking: MappedBooking) => ({
     _id: booking._id,
     customer: booking.customer
       ? {
@@ -158,7 +148,7 @@ const getUserBookings = async (userId: Types.ObjectId) => {
     })
     .exec();
 
-  const mappedBookings = bookings.map((booking: any) => ({
+  const mappedBookings = bookings.map((booking: MappedBooking) => ({
     _id: booking._id,
     service: booking.serviceId
       ? {

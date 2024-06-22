@@ -14,9 +14,6 @@ const service_model_1 = require("../service/service.model");
 const slot_model_1 = require("../slot/slot.model");
 const userAuth_model_1 = require("../userAuth/userAuth.model");
 const booking_model_1 = require("./booking.model");
-const isTUserAuth = (obj) => obj && obj._id && typeof obj._id === "string";
-const isTService = (obj) => obj && obj._id && typeof obj._id === "string";
-const isTslot = (obj) => obj && obj._id && typeof obj._id === "string";
 const createBooking = (userId, bookingData) => __awaiter(void 0, void 0, void 0, function* () {
     const { serviceId, slotId, vehicleType, vehicleBrand, vehicleModel, manufacturingYear, registrationPlate, } = bookingData;
     if (!slotId)

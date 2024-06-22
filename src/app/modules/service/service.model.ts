@@ -28,10 +28,9 @@ const serviceSchema = new Schema<TService>(
 );
 
 serviceSchema.pre("save", async function (next) {
-  const service = this;
   const existingService = await Service.findOne({
-    name: service.name,
-    _id: { $ne: service._id },
+    name: this.name,
+    _id: { $ne: this._id },
     isDeleted: false,
   });
 

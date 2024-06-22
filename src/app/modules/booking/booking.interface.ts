@@ -15,3 +15,10 @@ export type TBooking = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export interface MappedBooking {
+  _id: Types.ObjectId;
+  customer: Partial<TUserAuth>;
+  service: Partial<TService>;
+  slot: Partial<Tslot>;
+}

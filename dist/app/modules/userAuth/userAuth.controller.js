@@ -29,7 +29,6 @@ const signup = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
 }));
 const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = yield userAuth_service_1.UserAuthService.loginService(req.body);
-    const { token, user } = userData;
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,

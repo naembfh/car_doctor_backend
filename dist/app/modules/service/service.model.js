@@ -35,10 +35,9 @@ const serviceSchema = new mongoose_1.Schema({
 });
 serviceSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const service = this;
         const existingService = yield exports.Service.findOne({
-            name: service.name,
-            _id: { $ne: service._id },
+            name: this.name,
+            _id: { $ne: this._id },
             isDeleted: false,
         });
         if (existingService) {

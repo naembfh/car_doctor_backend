@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
 import { Service } from "../service/service.model";
-import { Tslot } from "./slot.interface";
+import { SlotQuery, Tslot } from "./slot.interface";
 import { Slot } from "./slot.model";
 
 const createSlots = async (slotData: Tslot) => {
@@ -68,7 +68,7 @@ function addMinutes(time: string, minutes: number): string {
   return `${newHours.toString().padStart(2, "0")}:${newMinutes.toString().padStart(2, "0")}`;
 }
 
-const getAvailableSlots = async (query: any) => {
+const getAvailableSlots = async (query: SlotQuery) => {
   // Fetch slots asynchronously
   const slots = await Slot.find(query)
     .populate("service", "_id name description price duration isDeleted")

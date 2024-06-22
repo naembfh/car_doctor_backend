@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import { SlotQuery } from "./slot.interface";
 import { SlotService } from "./slot.service";
 
 // Create slots for a service
@@ -17,7 +18,7 @@ const createSlots = catchAsync(async (req, res) => {
 
 const getAvailableSlots = catchAsync(async (req, res) => {
   const { date, serviceId } = req.query;
-  const query: any = {};
+  const query: SlotQuery = {};
 
   if (date) {
     query.date = date;
