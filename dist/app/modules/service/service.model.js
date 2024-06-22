@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Service = void 0;
 const mongoose_1 = require("mongoose");
+const slot_model_1 = require("../slot/slot.model");
 const serviceSchema = new mongoose_1.Schema({
     name: { type: String, required: true, unique: true },
     description: { type: String, required: true },
@@ -45,6 +46,37 @@ serviceSchema.pre("save", function (next) {
             return next(error);
         }
         next();
+    });
+});
+serviceSchema.pre("findOneAndUpdate", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const update = this.getUpdate();
+        if ((update === null || update === void 0 ? void 0 : update.isDeleted) === true) {
+            try {
+                const service = yield this.model.findOne(this.getQuery());
+                if (service) {
+                    yield slot_model_1.Slot.deleteMany({ service: service._id });
+                }
+                next();
+            }
+            catch (err) {
+                next(err);
+            }
+        }
+        else {
+            next();
+        }
+    });
+});
+serviceSchema.pre("deleteOne", { document: true, query: false }, function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield slot_model_1.Slot.deleteMany({ service: this._id });
+            next();
+        }
+        catch (err) {
+            next(err);
+        }
     });
 });
 // Create the model

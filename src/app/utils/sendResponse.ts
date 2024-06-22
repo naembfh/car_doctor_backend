@@ -13,6 +13,16 @@ const sendResponse = <T>(res: Response, data: TResponse<T>) => {
   // Convert the data object to plain object if it contains methods (e.g., a Mongoose document)
   const responseData = JSON.parse(JSON.stringify(data.data));
 
+  // Check if responseData is an empty array or null/undefined
+  const isEmptyData = Array.isArray(responseData) && responseData.length === 0;
+
+  // If no data is found, set the appropriate message and status code
+  if (isEmptyData) {
+    data.success = false;
+    data.statusCode = 404;
+    data.message = "No Data Found";
+  }
+
   // Remove the password field if it exists
   if (responseData.password) {
     delete responseData.password;
