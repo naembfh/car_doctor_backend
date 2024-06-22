@@ -18,15 +18,22 @@ const createSlots = catchAsync(async (req, res) => {
 
 const getAvailableSlots = catchAsync(async (req, res) => {
   const { date, serviceId } = req.query;
+
   const query: SlotQuery = {};
 
-  if (date) {
-    query.date = date;
-  }
+  // Helper function to extract string from various types
+  const getStringValue = (value: unknown): string | undefined => {
+    if (typeof value === "string") {
+      return value;
+    } else if (Array.isArray(value) && typeof value[0] === "string") {
+      return value[0];
+    }
+    return undefined;
+  };
 
-  if (serviceId) {
-    query.service = serviceId;
-  }
+  // Assigning query parameters if they are present
+  query.date = getStringValue(date);
+  query.service = getStringValue(serviceId);
 
   // Fetch slots asynchronously
   const slots = await SlotService.getAvailableSlots(query);

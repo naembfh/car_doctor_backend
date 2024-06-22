@@ -30,12 +30,19 @@ const createSlots = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
 const getAvailableSlots = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { date, serviceId } = req.query;
     const query = {};
-    if (date) {
-        query.date = date;
-    }
-    if (serviceId) {
-        query.service = serviceId;
-    }
+    // Helper function to extract string from various types
+    const getStringValue = (value) => {
+        if (typeof value === "string") {
+            return value;
+        }
+        else if (Array.isArray(value) && typeof value[0] === "string") {
+            return value[0];
+        }
+        return undefined;
+    };
+    // Assigning query parameters if they are present
+    query.date = getStringValue(date);
+    query.service = getStringValue(serviceId);
     // Fetch slots asynchronously
     const slots = yield slot_service_1.SlotService.getAvailableSlots(query);
     // Respond with fetched slots

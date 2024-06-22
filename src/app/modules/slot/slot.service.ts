@@ -69,13 +69,23 @@ function addMinutes(time: string, minutes: number): string {
 }
 
 const getAvailableSlots = async (query: SlotQuery) => {
+  const filter: Partial<SlotQuery> = {};
+
+  if (query.date !== undefined) {
+    filter.date = query.date;
+  }
+
+  if (query.service !== undefined) {
+    filter.service = query.service;
+  }
+
   // Fetch slots asynchronously
-  const slots = await Slot.find(query)
+  const slots = await Slot.find(filter)
     .populate("service", "_id name description price duration isDeleted")
     .exec();
 
-  if (!slots) {
-    throw new AppError(httpStatus.NOT_FOUND, "No available slots found");
+  if (!slots || slots.length === 0) {
+    throw new AppError(404, "No available slots found");
   }
 
   return slots;

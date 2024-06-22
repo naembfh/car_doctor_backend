@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { Service } from "../service/service.model";
 import { Slot } from "../slot/slot.model";
 import { UserAuth } from "../userAuth/userAuth.model";
-import { MappedBooking, TBooking } from "./booking.interface";
+import { TBooking } from "./booking.interface";
 import { Booking } from "./booking.model";
 
 const createBooking = async (
@@ -100,7 +100,7 @@ const getAllBookings = async () => {
     })
     .exec();
 
-  const result = bookings.map((booking: MappedBooking) => ({
+  const result = bookings.map((booking: any) => ({
     _id: booking._id,
     customer: booking.customer
       ? {
@@ -148,7 +148,7 @@ const getUserBookings = async (userId: Types.ObjectId) => {
     })
     .exec();
 
-  const mappedBookings = bookings.map((booking: MappedBooking) => ({
+  const mappedBookings = bookings.map((booking: any) => ({
     _id: booking._id,
     service: booking.serviceId
       ? {
