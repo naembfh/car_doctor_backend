@@ -52,6 +52,15 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     ];
   } else if (err instanceof Error) {
     message = err.message;
+
+    if (message === "You have no access to this route") {
+      return res.status(statusCode).json({
+        success: false,
+        statusCode: 401,
+        message: "You have no access to this route",
+      });
+    }
+
     errorSources = [
       {
         path: "",

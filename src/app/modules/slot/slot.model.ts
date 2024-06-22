@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import httpStatus from "http-status";
+import { Document, Model, Schema, model } from "mongoose";
+import AppError from "../../errors/AppError";
 import { Tslot } from "./slot.interface";
 
 const slotSchema = new Schema<Tslot>(
@@ -22,28 +24,29 @@ const slotSchema = new Schema<Tslot>(
   }
 );
 
-// slotSchema.pre("save", async function (next) {
-//   const slot = this as Document & Tslot;
+slotSchema.pre("save", async function (next) {
+  const slot = this as Document & Tslot;
 
-//   // Check for overlapping slots
-//   const overlappingSlot = await (slot.constructor as Model<Tslot>).findOne({
-//     service: slot.service,
-//     date: slot.date,
-//     $or: [
-//       { startTime: { $lt: slot.endTime }, endTime: { $gt: slot.startTime } },
-//       { startTime: { $gte: slot.startTime, $lt: slot.endTime } },
-//       { endTime: { $gt: slot.startTime, $lte: slot.endTime } },
-//     ],
-//   });
+  if (slot.isNew) {
+    const overlappingSlot = await (slot.constructor as Model<Tslot>).findOne({
+      service: slot.service,
+      date: slot.date,
+      $or: [
+        { startTime: { $lt: slot.endTime }, endTime: { $gt: slot.startTime } },
+        { startTime: { $gte: slot.startTime, $lt: slot.endTime } },
+        { endTime: { $gt: slot.startTime, $lte: slot.endTime } },
+      ],
+    });
 
-//   if (overlappingSlot) {
-//     throw new AppError(
-//       httpStatus.CONFLICT,
-//       `A slot already exists for the specified time range on ${overlappingSlot.date} from ${overlappingSlot.startTime} to ${overlappingSlot.endTime}`
-//     );
-//   }
+    if (overlappingSlot) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `A slot already exists for the specified time range on ${overlappingSlot.date} from ${overlappingSlot.startTime} to ${overlappingSlot.endTime}`
+      );
+    }
+  }
 
-//   next();
-// });
+  next();
+});
 
 export const Slot = model<Tslot>("Slot", slotSchema);

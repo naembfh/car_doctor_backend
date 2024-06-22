@@ -40,7 +40,7 @@ const auth = (requiredRoles: TUserRole[]) => {
     }
 
     if (!requiredRoles.includes(role)) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "Not permissible !");
+      throw new Error("You have no access to this route");
     }
 
     req.user = decoded; // Assuming req.user is a valid place to store user info

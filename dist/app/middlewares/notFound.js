@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const notFound = (req, res, next) => {
     return res.status(500).json({
         success: false,
-        statusCode: 401,
+        statusCode: 404,
         message: "Not Found",
     });
 };

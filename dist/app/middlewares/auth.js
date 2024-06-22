@@ -37,7 +37,7 @@ const auth = (requiredRoles) => {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, "This user is not found !");
         }
         if (!requiredRoles.includes(role)) {
-            throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "Not permissible !");
+            throw new Error("You have no access to this route");
         }
         req.user = decoded; // Assuming req.user is a valid place to store user info
         next();
