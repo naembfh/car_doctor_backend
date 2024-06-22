@@ -7,7 +7,6 @@ let server: Server;
 async function main() {
   try {
     console.log(config.database_url);
-
     await mongoose.connect(
       "mongodb+srv://naembfh:rDnl3Hdkq5hAz0bx@cluster0.nk62lkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     );

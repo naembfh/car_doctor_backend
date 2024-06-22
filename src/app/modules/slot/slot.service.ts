@@ -84,9 +84,9 @@ const getAvailableSlots = async (query: SlotQuery) => {
     .populate("service", "_id name description price duration isDeleted")
     .exec();
 
-  if (!slots || slots.length === 0) {
-    throw new AppError(404, "No available slots found");
-  }
+  // if (!slots || slots.length === 0) {
+  //   throw new AppError(404, "No available slots found");
+  // }
 
   return slots;
 };

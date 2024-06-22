@@ -80,9 +80,9 @@ const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function*
     const slots = yield slot_model_1.Slot.find(filter)
         .populate("service", "_id name description price duration isDeleted")
         .exec();
-    if (!slots || slots.length === 0) {
-        throw new AppError_1.default(404, "No available slots found");
-    }
+    // if (!slots || slots.length === 0) {
+    //   throw new AppError(404, "No available slots found");
+    // }
     return slots;
 });
 exports.SlotService = {
