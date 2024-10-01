@@ -85,7 +85,24 @@ const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function*
     // }
     return slots;
 });
+// Update slot booking status
+const updateSlot = (slotId, isBooked) => __awaiter(void 0, void 0, void 0, function* () {
+    const slot = yield slot_model_1.Slot.findById(slotId);
+    if (!slot) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Slot not found");
+    }
+    // Validate isBooked
+    const validStatuses = ["available", "booked", "canceled"];
+    if (!validStatuses.includes(isBooked)) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Invalid isBooked status: ${isBooked}`);
+    }
+    // Assign the validated value
+    slot.isBooked = isBooked;
+    yield slot.save();
+    return slot;
+});
 exports.SlotService = {
     createSlots,
     getAvailableSlots,
+    updateSlot,
 };

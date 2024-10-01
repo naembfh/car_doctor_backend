@@ -6,6 +6,7 @@ type TResponse<T> = {
   success: boolean;
   message?: string;
   token?: string;
+  accessToken?: string;
   data: T;
 };
 

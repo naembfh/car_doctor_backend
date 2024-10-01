@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
 import { Service } from "../service/service.model";
-import { SlotQuery, Tslot } from "./slot.interface";
+import { SlotQuery, TBook, Tslot } from "./slot.interface";
 import { Slot } from "./slot.model";
 
 const createSlots = async (slotData: Tslot) => {
@@ -91,7 +91,28 @@ const getAvailableSlots = async (query: SlotQuery) => {
   return slots;
 };
 
+// Update slot booking status
+const updateSlot = async (slotId: string, isBooked: TBook) => {
+  const slot = await Slot.findById(slotId);
+  if (!slot) {
+    throw new AppError(httpStatus.NOT_FOUND, "Slot not found");
+  }
+
+  // Validate isBooked
+  const validStatuses: TBook[] = ["available", "booked", "canceled"];
+  if (!validStatuses.includes(isBooked)) {
+    throw new AppError(httpStatus.BAD_REQUEST, `Invalid isBooked status: ${isBooked}`);
+  }
+
+  // Assign the validated value
+  slot.isBooked = isBooked;
+  await slot.save();
+
+  return slot;
+};
+
 export const SlotService = {
   createSlots,
   getAvailableSlots,
+  updateSlot,
 };

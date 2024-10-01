@@ -19,8 +19,11 @@ router.delete("/services/:id", (0, auth_1.default)(["admin"]), service_controlle
 // slots
 router.post("/services/slots", (0, auth_1.default)(["admin"]), slot_controller_1.SlotController.createSlots);
 router.get("/slots/availability", slot_controller_1.SlotController.getAvailableSlots);
+router.patch("/slots/update", slot_controller_1.SlotController.updateSlot);
 // booking
-router.post("/bookings", (0, auth_1.default)(["user"]), booking_controller_1.BookingController.bookService);
+router.post("/bookings", (0, auth_1.default)(["admin", "user"]), booking_controller_1.BookingController.bookService);
 router.get("/bookings", (0, auth_1.default)(["admin"]), booking_controller_1.BookingController.getAllBookings);
-router.get("/my-bookings", (0, auth_1.default)(["user"]), booking_controller_1.BookingController.getUserBookings);
+router.get("/my-bookings", (0, auth_1.default)(["user", "admin"]), booking_controller_1.BookingController.getUserBookings);
+router.post("/create-checkout-session", booking_controller_1.BookingController.createCheckoutSession);
+router.get("/success", booking_controller_1.BookingController.handleSuccessPayment);
 exports.ServicesRoutes = router;

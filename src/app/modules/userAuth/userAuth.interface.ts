@@ -10,9 +10,12 @@ export type TUserAuth = {
   phone: string;
   role: UserRole;
   address: string;
+  img?: string;
 };
 
-export interface UserAuthDocument extends Document, TUserAuth {}
+export interface UserAuthDocument extends Document, TUserAuth {
+  refreshToken?: string;
+}
 
 export interface UserAuthModel extends Model<UserAuthDocument> {
   IsUserExistsByEmail(email: string): Promise<UserAuthDocument | null>;

@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingService = void 0;
+const stripe_1 = __importDefault(require("stripe"));
 const service_model_1 = require("../service/service.model");
 const slot_model_1 = require("../slot/slot.model");
 const userAuth_model_1 = require("../userAuth/userAuth.model");
@@ -26,6 +30,7 @@ const createBooking = (userId, bookingData) => __awaiter(void 0, void 0, void 0,
     const service = yield service_model_1.Service.findById(serviceId);
     if (!service)
         throw new Error("Service not found");
+    console.log(service);
     const slot = yield slot_model_1.Slot.findById(slotId);
     if (!slot)
         throw new Error("Slot not found");
@@ -57,6 +62,7 @@ const createBooking = (userId, bookingData) => __awaiter(void 0, void 0, void 0,
             name: service.name,
             description: service.description,
             price: service.price,
+            img: service.img,
             duration: service.duration,
             isDeleted: service.isDeleted,
         },
@@ -131,7 +137,7 @@ const getUserBookings = (userId) => __awaiter(void 0, void 0, void 0, function* 
     const bookings = yield booking_model_1.Booking.find({ customer: userId })
         .populate({
         path: "serviceId",
-        select: "_id name description price duration isDeleted",
+        select: "_id name description img price duration isDeleted",
     })
         .populate({
         path: "slotId",
@@ -145,6 +151,7 @@ const getUserBookings = (userId) => __awaiter(void 0, void 0, void 0, function* 
                 _id: booking.serviceId._id,
                 name: booking.serviceId.name,
                 description: booking.serviceId.description,
+                img: booking.serviceId.img,
                 price: booking.serviceId.price,
                 duration: booking.serviceId.duration,
                 isDeleted: booking.serviceId.isDeleted,
@@ -165,13 +172,63 @@ const getUserBookings = (userId) => __awaiter(void 0, void 0, void 0, function* 
         vehicleModel: booking.vehicleModel,
         manufacturingYear: booking.manufacturingYear,
         registrationPlate: booking.registrationPlate,
+        isPaid: booking.isPaid,
         createdAt: booking.createdAt,
         updatedAt: booking.updatedAt,
     }));
     return mappedBookings;
 });
+const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2024-06-20",
+});
+const createCheckoutSession = (bookings, // Ensure this is an array of BookingItem
+customerEmail) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const session = yield stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            customer_email: customerEmail,
+            line_items: bookings.map((booking) => ({
+                // Explicitly type 'booking' here
+                price_data: {
+                    currency: "usd",
+                    product_data: {
+                        name: booking.service.name,
+                        description: booking.service.description,
+                    },
+                    unit_amount: booking.service.price * 100, // Amount in cents
+                },
+                quantity: 1,
+            })),
+            metadata: {
+                bookingIds: bookings
+                    .map((booking) => booking._id)
+                    .join(","), // Type 'booking' as well here
+            },
+            success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.CLIENT_URL}/dashboard/current-bookings`,
+        });
+        return { sessionId: session.id }; // Ensure sessionId is returned
+    }
+    catch (error) {
+        console.error("Stripe session creation error:", error);
+        throw new Error("Failed to create checkout session");
+    }
+});
+const handleStripePaymentSuccess = (sessionId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const session = yield stripe.checkout.sessions.retrieve(sessionId);
+    const bookingIds = (_a = session.metadata) === null || _a === void 0 ? void 0 : _a.bookingIds.split(",");
+    // Update booking status or do any necessary post-payment handling
+    if (bookingIds) {
+        yield booking_model_1.Booking.updateMany({ _id: { $in: bookingIds } }, { isPaid: true });
+    }
+    return session;
+});
 exports.BookingService = {
     createBooking,
     getAllBookings,
     getUserBookings,
+    createCheckoutSession,
+    handleStripePaymentSuccess,
 };

@@ -13,6 +13,7 @@ export interface TBooking {
   vehicleModel: string;
   manufacturingYear: number;
   registrationPlate: string;
+  isPaid: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

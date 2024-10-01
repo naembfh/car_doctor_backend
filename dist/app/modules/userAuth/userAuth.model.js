@@ -43,9 +43,11 @@ const UserAuthSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
-    phone: { type: String, required: true },
+    phone: { type: String },
     role: { type: String, enum: ["admin", "user"], default: "user" },
-    address: { type: String, required: true },
+    address: { type: String },
+    img: { type: String },
+    refreshToken: { type: String, select: false },
 }, {
     timestamps: true,
     toJSON: {

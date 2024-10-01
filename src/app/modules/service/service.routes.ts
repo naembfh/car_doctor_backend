@@ -20,10 +20,26 @@ router.delete(
 // slots
 router.post("/services/slots", auth(["admin"]), SlotController.createSlots);
 router.get("/slots/availability", SlotController.getAvailableSlots);
+router.patch("/slots/update", SlotController.updateSlot);
 
 // booking
-router.post("/bookings", auth(["user"]), BookingController.bookService);
+router.post(
+  "/bookings",
+  auth(["admin", "user"]),
+  BookingController.bookService
+);
 router.get("/bookings", auth(["admin"]), BookingController.getAllBookings);
-router.get("/my-bookings", auth(["user"]), BookingController.getUserBookings);
+router.get(
+  "/my-bookings",
+  auth(["user", "admin"]),
+  BookingController.getUserBookings
+);
+
+router.post(
+  "/create-checkout-session",
+  BookingController.createCheckoutSession
+);
+
+router.get("/success", BookingController.handleSuccessPayment);
 
 export const ServicesRoutes = router;

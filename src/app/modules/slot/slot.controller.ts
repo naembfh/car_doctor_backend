@@ -47,7 +47,21 @@ const getAvailableSlots = catchAsync(async (req, res) => {
   });
 });
 
+// Update slot booking status
+const updateSlot = catchAsync(async (req, res) => {
+  const { slotId, isBooked } = req.body;
+  const updatedSlot = await SlotService.updateSlot(slotId, isBooked);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Slot updated successfully",
+    data: updatedSlot,
+  });
+});
+
 export const SlotController = {
   createSlots,
   getAvailableSlots,
+  updateSlot,
 };

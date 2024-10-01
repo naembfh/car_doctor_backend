@@ -17,11 +17,13 @@ const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const service_model_1 = require("./service.model");
 const createService = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(payload);
     const result = yield service_model_1.Service.create(payload);
     return result;
 });
 const getServiceById = (serviceId) => __awaiter(void 0, void 0, void 0, function* () {
-    const service = yield service_model_1.Service.findById(serviceId);
+    console.log(serviceId);
+    const service = yield service_model_1.Service.findOne({ id: serviceId });
     if (!service) {
         throw new Error(`Service with id ${serviceId} not found`);
     }

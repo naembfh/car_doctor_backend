@@ -4,13 +4,15 @@ import { TService } from "./service.interface";
 import { Service } from "./service.model";
 
 const createService = async (payload: TService) => {
+
   const result = await Service.create(payload);
 
   return result;
 };
 
 const getServiceById = async (serviceId: string) => {
-  const service = await Service.findById(serviceId);
+
+  const service = await Service.findOne({ id: serviceId });
 
   if (!service) {
     throw new Error(`Service with id ${serviceId} not found`);
